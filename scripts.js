@@ -7,31 +7,34 @@ const Modal = {
   },
 };
 
-const transactions = [
-  {
-    description: "Luz",
-    amount: -50001,
-    date: "23/01/2021",
-  },
-  {
-    description: "Criação de website",
-    amount: 500000,
-    date: "23/01/2021",
-  },
-  {
-    description: "Internet",
-    amount: -20012,
-    date: "23/01/2021",
-  },
-  {
-    description: "App",
-    amount: 200000,
-    date: "23/01/2021",
-  },
-];
-
 const Transaction = {
-  all: transactions,
+  all: [
+    {
+      description: "Luz",
+      amount: -50001,
+      date: "23/01/2021",
+    },
+    {
+      description: "Criação de website",
+      amount: 500000,
+      date: "23/01/2021",
+    },
+    {
+      description: "Internet",
+      amount: -20012,
+      date: "23/01/2021",
+    },
+    {
+      description: "App",
+      amount: 200000,
+      date: "23/01/2021",
+    },
+    {
+      description: "IPVA",
+      amount: 1760,
+      date: 29 / 01 / 2021,
+    },
+  ],
 
   add(transaction) {
     Transaction.all.push(transaction);
@@ -44,7 +47,7 @@ const Transaction = {
   remove(index) {
     Transaction.all.splice(index, 1);
 
-    App.reload()
+    App.reload();
   },
 
   incomes() {
@@ -143,14 +146,50 @@ const App = {
   },
 };
 
+const Form = {
+  description: document.querySelector("input#description"),
+  amount: document.querySelector("input#amount"),
+  date: document.querySelector("input#date"),
+
+  getValues() {
+    return {
+      description: Form.description.value,
+      amount: Form.amount.value,
+      date: Form.date.value,
+    };
+  },
+
+  formatData() {
+    console.log("Formatar todos os campos");
+  },
+  validateFields() {
+    const { description, amount, date } = Form.getValues();
+
+    if (
+      description.trim() === "" ||
+      amount.trim() === "" ||
+      date.trim() === ""
+    ) {
+      throw new Error("Por favor preencha todos os campos!");
+    }
+  },
+
+  submit(event) {
+    event.preventDefault();
+
+    try {
+      // verificar se todas as informações foram preenchidas
+      Form.validateFields();
+      // formatar os dados para salvar
+      // Form.formatData()
+      // salvar
+      // apagar os dados do formulário
+      // feche o modal
+      // atualizar a aplicação
+    } catch (error) {
+        alert(error.message)
+    }
+  },
+};
+
 App.init();
-
-// Transaction.add({
-  
-//     description: "IPVA",
-//     amount: 1760,
-//     date: 29 / 01 / 2021,
-//   });
-  
-
-Transaction.remove(3);
