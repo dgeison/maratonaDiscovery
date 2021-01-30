@@ -8,33 +8,34 @@ const Modal = {
 };
 
 const Transaction = {
-  all: [
-    {
-      description: "Luz",
-      amount: -50001,
-      date: "23/01/2021",
-    },
-    {
-      description: "Criação de website",
-      amount: 500000,
-      date: "23/01/2021",
-    },
-    {
-      description: "Internet",
-      amount: -20012,
-      date: "23/01/2021",
-    },
-    {
-      description: "App",
-      amount: 200000,
-      date: "23/01/2021",
-    },
-    {
-      description: "IPVA",
-      amount: 1760,
-      date: "29/01/2021",
-    },
-  ],
+  all: 
+  // [
+  //   {
+  //     description: "Luz",
+  //     amount: -50001,
+  //     date: "23/01/2021",
+  //   },
+  //   {
+  //     description: "Criação de website",
+  //     amount: 500000,
+  //     date: "23/01/2021",
+  //   },
+  //   {
+  //     description: "Internet",
+  //     amount: -20012,
+  //     date: "23/01/2021",
+  //   },
+  //   {
+  //     description: "App",
+  //     amount: 200000,
+  //     date: "23/01/2021",
+  //   },
+  //   {
+  //     description: "IPVA",
+  //     amount: 1760,
+  //     date: "29/01/2021",
+  //   },
+  // ],
   add(transaction) {
     Transaction.all.push(transaction);
 
@@ -215,6 +216,18 @@ const Form = {
     } catch (error) {
       alert(error.message);
     }
+  },
+};
+
+const Storage = {
+  get() {
+    return JSON.parse(localStorage.getItem("dev.finances:transactions")) || [];
+  },
+  set(transactions) {
+    localStorage.setItem(
+      "dev.finances:transactions",
+      JSON.stringify(transactions)
+    );
   },
 };
 
