@@ -32,10 +32,9 @@ const Transaction = {
     {
       description: "IPVA",
       amount: 1760,
-      date: 29 / 01 / 2021,
+      date: "29/01/2021",
     },
   ],
-
   add(transaction) {
     Transaction.all.push(transaction);
 
@@ -43,13 +42,11 @@ const Transaction = {
 
     console.log(Transaction.all);
   },
-
   remove(index) {
     Transaction.all.splice(index, 1);
 
     App.reload();
   },
-
   incomes() {
     let income = 0;
     Transaction.all.forEach((transaction) => {
@@ -76,30 +73,31 @@ const Transaction = {
 };
 
 const DOM = {
-  transactionsContainer: document.querySelector("#data-table"),
+  transactionsContainer: document.querySelector("#data-table tbody"),
 
   addTransaction(transaction, index) {
     const tr = document.createElement("tr");
-    tr.innerHTML = DOM.innerHTMLTransaction(transaction);
+    tr.innerHTML = DOM.innerHTMLTransaction(transaction, index);
+    tr.dataset.index = index;
 
     DOM.transactionsContainer.appendChild(tr);
   },
-  innerHTMLTransaction(transaction) {
+  innerHTMLTransaction(transaction, index) {
     const CSSclass = transaction.amount > 0 ? "income" : "expense";
 
     const amount = Utils.formatCurrency(transaction.amount);
 
     const html = `
         <td class="description">${transaction.description}</td>
-        <td class="${CSSclass}"> ${amount}</td>
+        <td class="${CSSclass}">${amount}</td>
         <td class="date">${transaction.date}</td>
-        <td><img src="assets/minus.svg" alt="Remover transação"/>
+        <td>
+          <img onclick="Transaction.remove(${index})" src="assets/minus.svg" alt="Remover transação"/>
         </td>              
         `;
 
     return html;
   },
-
   updateBalance() {
     document.getElementById("incomeDisplay").innerHTML = Utils.formatCurrency(
       Transaction.incomes()
@@ -117,6 +115,14 @@ const DOM = {
 };
 
 const Utils = {
+  formatAmount(value) {
+    value = Number(value) * 100;
+    return value;
+  },
+  formatDate(date) {
+    const splittedDate = date.split("-");
+    return `${splittedDate[2]}/${splittedDate[1]}/${splittedDate[0]}`;
+  },
   formatCurrency(value) {
     const signal = Number(value) < 0 ? "-" : "";
 
@@ -134,8 +140,8 @@ const Utils = {
 
 const App = {
   init() {
-    Transaction.all.forEach((transaction) => {
-      DOM.addTransaction(transaction);
+    Transaction.all.forEach((transaction, index) => {
+      DOM.addTransaction(transaction, index);
     });
 
     DOM.updateBalance();
@@ -159,9 +165,6 @@ const Form = {
     };
   },
 
-  formatData() {
-    console.log("Formatar todos os campos");
-  },
   validateFields() {
     const { description, amount, date } = Form.getValues();
 
@@ -174,6 +177,26 @@ const Form = {
     }
   },
 
+  formatValues() {
+    let { description, amount, date } = Form.getValues();
+
+    amount = Utils.formatAmount(amount);
+
+    date = Utils.formatDate(date);
+
+    return {
+      description,
+      amount,
+      date,
+    };
+  },
+
+  clearFields() {
+    Form.description.value = "";
+    Form.amount.value = "";
+    Form.date.value = "";
+  },
+
   submit(event) {
     event.preventDefault();
 
@@ -181,13 +204,16 @@ const Form = {
       // verificar se todas as informações foram preenchidas
       Form.validateFields();
       // formatar os dados para salvar
-      // Form.formatData()
+      const transaction = Form.formatValues();
       // salvar
+      Transaction.add(transaction);
       // apagar os dados do formulário
+      Form.clearFields();
       // feche o modal
-      // atualizar a aplicação
+      Modal.close();
+      // atualizar a aplicação, já tem o add
     } catch (error) {
-        alert(error.message)
+      alert(error.message);
     }
   },
 };
