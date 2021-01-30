@@ -7,8 +7,20 @@ const Modal = {
   },
 };
 
+const Storage = {
+  get() {
+    return JSON.parse(localStorage.getItem("dev.finances:transactions")) || [];
+  },
+  set(transactions) {
+    localStorage.setItem(
+      "dev.finances:transactions",
+      JSON.stringify(transactions)
+    );
+  },
+};
+
 const Transaction = {
-  all: 
+  all: Storage.get(),
   // [
   //   {
   //     description: "Luz",
@@ -36,6 +48,7 @@ const Transaction = {
   //     date: "29/01/2021",
   //   },
   // ],
+
   add(transaction) {
     Transaction.all.push(transaction);
 
@@ -139,20 +152,6 @@ const Utils = {
   },
 };
 
-const App = {
-  init() {
-    Transaction.all.forEach((transaction, index) => {
-      DOM.addTransaction(transaction, index);
-    });
-
-    DOM.updateBalance();
-  },
-  reload() {
-    DOM.clearTransactions();
-    App.init();
-  },
-};
-
 const Form = {
   description: document.querySelector("input#description"),
   amount: document.querySelector("input#amount"),
@@ -219,15 +218,23 @@ const Form = {
   },
 };
 
-const Storage = {
-  get() {
-    return JSON.parse(localStorage.getItem("dev.finances:transactions")) || [];
+const App = {
+  init() {
+
+    //Forma abreviada Transaction.all.forEach(DOM.addTransaction)
+    Transaction.all.forEach((transaction, index) => {
+      DOM.addTransaction(transaction, index);
+    });
+
+
+
+    DOM.updateBalance();
+
+    Storage.set(Transaction.all);
   },
-  set(transactions) {
-    localStorage.setItem(
-      "dev.finances:transactions",
-      JSON.stringify(transactions)
-    );
+  reload() {
+    DOM.clearTransactions();
+    App.init();
   },
 };
 
